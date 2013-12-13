@@ -1,0 +1,25 @@
+author: Brandon Riffle randon@devoverflow.com
+name: Needs
+main: com.devoverflow.reimagined.needs.Needs
+version: 1.0
+description: >
+             A collection of commands and Utilites.
+commands:
+  world:
+    aliases: [w]
+    description: Needs World interface.
+    usage: /<command> [list|go]
+    perm: Needs.world
+  ntp:
+    aliases: [nteleport]
+    description: Teleport's player to cords or another player.
+    usage: /<command>
+    perm: Needs.tp
+  tpto:
+    description: Teleport's executor to target.
+    usage: /<command>
+    perm: Needs.tpto
+  tphere:
+    description: Teleport's target to executor.
+    usage: /<command>
+    perm: Needs.tphere

@@ -5,13 +5,18 @@ version: 1.0
 description: >
              A collection of commands and Utilites.
 commands:
+  whereami:
+    aliases: [where]
+    description: Tells player what world there are in.
+    usage: /<command>
+    perm: Needs.whereami
   world:
-    aliases: [w]
+    aliases: [w, wtp]
     description: Needs World interface.
     usage: /<command> [list|go]
     perm: Needs.world
-  ntp:
-    aliases: [nteleport]
+  tp:
+    aliases: [teleport]
     description: Teleport's player to cords or another player.
     usage: /<command>
     perm: Needs.tp

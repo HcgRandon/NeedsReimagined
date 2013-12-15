@@ -1,10 +1,12 @@
 package com.devoverflow.reimagined.needs;
 
+import java.io.File;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -43,11 +45,11 @@ public class Needs extends JavaPlugin{
 		nwm      = new NeedsWorldManager(this);  //startup world manager
 		nms      = new NeedsMessageSender(this); //startup Message Sender
 		
-		log.i(LOG_TAG, getCommandPerms("world"));
-		
-		getCommand("ntp").setExecutor(new CommandTp(this));
+		getCommand("tp").setExecutor(new CommandTp(this));
 		getCommand("tpto").setExecutor(new CommandTpto(this));
 		getCommand("tphere").setExecutor(new CommandTphere(this));
+		getCommand("world").setExecutor(new CommandWorld(this));
+		getCommand("whereami").setExecutor(new CommandWhereami(this));
 		
 		log.i(LOG_TAG, "Needs is now enabled");
 	}
@@ -59,6 +61,22 @@ public class Needs extends JavaPlugin{
 	@SuppressWarnings("unused")
 	private void shutdownplugin() {
 		Bukkit.getPluginManager().disablePlugin(this);
+	}
+	
+	public boolean isFloat(String string){
+		try {
+			Float.parseFloat(string);
+			return true;
+		} catch (NumberFormatException ex){
+			return false;
+		}
+	}
+	
+	public File getPlayerDir(Player p) {
+		File playerDir = new File(getDataFolder() + File.separator + "players" + File.separator + p.getName());
+		if (!playerDir.exists()) playerDir.mkdirs();
+		
+		return playerDir;
 	}
 	
 	public String getCommandPerms(String cmdName) {
@@ -75,6 +93,7 @@ public class Needs extends JavaPlugin{
 		if (cmd.isEmpty() || addit.isEmpty()) return null;
 		//safe to continue with return
 		if (addit.containsKey("perm")) return addit.get("perm").toString();
+		else if (addit.containsKey("perms")) return addit.get("perms").toString();
 		
 		return null;
 	}

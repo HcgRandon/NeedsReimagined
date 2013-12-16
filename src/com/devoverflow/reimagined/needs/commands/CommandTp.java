@@ -43,7 +43,7 @@ public class CommandTp implements CommandExecutor {
 			}
 			
 			player.sendDefault("Taking you to " + args[0] + ", " + args[1] + ", " + args[2]);
-			player.teleportTo(new Location(player.base.getWorld(), Float.parseFloat(args[0]), Float.parseFloat(args[1]), Float.parseFloat(args[2]), player.base.getLocation().getYaw(), player.base.getLocation().getPitch()));
+			player.teleportTo(new Location(player.getWorld(), Float.parseFloat(args[0]), Float.parseFloat(args[1]), Float.parseFloat(args[2]), player.getLocation().getYaw(), player.getLocation().getPitch()));
 		// /tp HcgRandon 10 10 10
 		} else if (!plugin.isFloat(args[0]) && plugin.isFloat(args[1]) && plugin.isFloat(args[2]) && plugin.isFloat(args[3])) {
 			if (plugin.getServer().getPlayer(args[0]) == null) {
@@ -56,7 +56,7 @@ public class CommandTp implements CommandExecutor {
 			
 			float x = Float.parseFloat(args[1]), y = Float.parseFloat(args[2]), z = Float.parseFloat(args[3]);
 			
-			Location tpLoc = new Location(target.base.getWorld(), x, y, z, target.base.getLocation().getYaw(), target.base.getLocation().getPitch());
+			Location tpLoc = new Location(target.getWorld(), x, y, z, target.getLocation().getYaw(), target.getLocation().getPitch());
 			
 			target.sendDefault("Taking you to " + x + ", " + y + ", " + z);
 			if (sender instanceof Player) player.sendDefault("Teleported " + args[0] + " to " + x + ", " + y + ", " + z);
@@ -97,7 +97,7 @@ public class CommandTp implements CommandExecutor {
 			
 			
 			target.sendDefault("Bringing " + plugin.chatDark_AQUA + tobetp.getName() + plugin.chatGold + " here.");
-			tobetp.teleportTo(target.base.getLocation());
+			tobetp.teleportTo(target.getLocation());
 		}
 		
 		return false;

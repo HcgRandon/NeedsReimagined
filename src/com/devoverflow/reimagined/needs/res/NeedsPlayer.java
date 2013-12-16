@@ -1,6 +1,10 @@
 package com.devoverflow.reimagined.needs.res;
 
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 
 import com.devoverflow.reimagined.needs.Needs;
@@ -8,12 +12,40 @@ import com.devoverflow.reimagined.needs.Needs;
 public class NeedsPlayer{
 	private Needs plugin;
 	private String LOG_TAG;
-	public Player base;
+	private Player base;
 	
 	public NeedsPlayer(Needs plugin, Player p) {
 		this.plugin  = plugin;
 		this.LOG_TAG = plugin.LOG_TAG;
 		this.base    = p;
+	}
+	
+	public Player getPlayer() {
+		return this.base;
+	}
+	
+	public World getWorld() {
+		return this.base.getWorld();
+	}
+	
+	public Location getLocation() {
+		return this.getLocation();
+	}
+	
+	public Boolean hasAgroMob() {
+		//check any agro on our player
+		Boolean isAgro = false;
+		for (Entity entity : this.base.getNearbyEntities(20, 20, 20)) {
+			if (!(entity instanceof Monster)) continue;
+			LivingEntity target = ((Monster)entity).getTarget();
+			if (!(target instanceof Player)) continue;
+			Player p = (Player)target;
+			if (p == this.base) {
+				isAgro = true;
+				break;
+			}
+		}
+		return isAgro;
 	}
 	
 	public void sendDefault(String message) {

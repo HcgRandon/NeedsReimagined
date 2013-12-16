@@ -5,6 +5,10 @@ version: 1.0
 description: >
              A collection of commands and Utilites.
 commands:
+  home:
+    description: Take player to their home.
+    usage: /<command>
+    perm: Needs.home
   whereami:
     aliases: [where]
     description: Tells player what world there are in.

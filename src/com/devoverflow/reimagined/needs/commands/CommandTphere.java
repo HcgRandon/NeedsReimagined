@@ -38,7 +38,7 @@ public class CommandTphere implements CommandExecutor{
 		if (plugin.getServer().getPlayer(args[0]) != null) {
 			NeedsPlayer target = new NeedsPlayer(plugin, plugin.getServer().getPlayer(args[0]));
 			
-			if (player.base == target.base) {
+			if (player.getPlayer() == target.getPlayer()) {
 				player.sendError("You are already here!");
 				return true;
 			}
@@ -48,7 +48,7 @@ public class CommandTphere implements CommandExecutor{
 			
 			plugin.log.i(plugin.LOG_TAG, sender.getName() + ": Teleported " + target.getName() + " to " + player.getName());
 			
-			target.teleportTo(player.base.getLocation());
+			target.teleportTo(player.getLocation());
 			return true;
 		} else {
 			player.sendError(plugin.chatDark_AQUA + args[0] + plugin.chatRed + " was not found on the server.");

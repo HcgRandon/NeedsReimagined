@@ -37,10 +37,10 @@ public class CommandSethome implements CommandExecutor {
 			return true;
 		}
 		
-		File homesFile = new File(plugin.getPlayerDir(player.base) + File.separator + "homes.yml");
+		File homesFile = new File(plugin.getPlayerDir(player.getPlayer()) + File.separator + "homes.yml");
 		FileConfiguration hConf = YamlConfiguration.loadConfiguration(homesFile);
 		
-		Location nHome = player.base.getLocation();
+		Location nHome = player.getLocation();
 		String w        = nHome.getWorld().getName();
 		
 		hConf.set(w + ".x", nHome.getX());

@@ -25,10 +25,10 @@ public class NeedsPlayerRespawnListener implements Listener{
 		NeedsPlayer player = new NeedsPlayer(plugin, event.getPlayer());
 		
 		Location location = event.getRespawnLocation();
-		File yamlFile = new File(plugin.getPlayerDir(player.base) + File.separator + "homes.yml");
+		File yamlFile = new File(plugin.getPlayerDir(player.getPlayer()) + File.separator + "homes.yml");
 		FileConfiguration hConf = YamlConfiguration.loadConfiguration(yamlFile);
 		
-		String start = player.base.getWorld().getName();
+		String start = player.getWorld().getName();
 		
 		Object x     = hConf.get(start + ".x", null);
 		Object y     = hConf.get(start + ".y", null);
@@ -39,7 +39,7 @@ public class NeedsPlayerRespawnListener implements Listener{
 		if (x == null && y == null && z == null && yaw == null && pitch == null) {
 			player.sendDefault("No home set, spawn it is then.");
 		}else{
-			location = new Location(player.base.getWorld(), Double.parseDouble(x.toString()), Double.parseDouble(y.toString()), Double.parseDouble(z.toString()), Float.parseFloat(yaw.toString()), Float.parseFloat(pitch.toString()));
+			location = new Location(player.getWorld(), Double.parseDouble(x.toString()), Double.parseDouble(y.toString()), Double.parseDouble(z.toString()), Float.parseFloat(yaw.toString()), Float.parseFloat(pitch.toString()));
 			player.sendDefault("Taking you to your home.");
 		}
 		

@@ -38,7 +38,7 @@ public class CommandTpto implements CommandExecutor{
 		if (plugin.getServer().getPlayer(args[0]) != null) {
 			NeedsPlayer target = new NeedsPlayer(plugin, plugin.getServer().getPlayer(args[0]));
 			
-			if (player.base == target.base) {
+			if (player.getPlayer() == target.getPlayer()) {
 				player.sendError("You are already here!");
 				return true;
 			}
@@ -48,7 +48,7 @@ public class CommandTpto implements CommandExecutor{
 			
 			plugin.log.i(plugin.LOG_TAG, sender.getName() + ": Teleported " + player.getName() + " to " + target.getName());
 			
-			player.teleportTo(target.base.getLocation());
+			player.teleportTo(target.getLocation());
 			return true;
 		} else {
 			player.sendError(plugin.chatDark_AQUA + args[0] + plugin.chatRed + " was not found on the server.");

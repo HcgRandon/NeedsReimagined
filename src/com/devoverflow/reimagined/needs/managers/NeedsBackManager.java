@@ -71,7 +71,7 @@ public class NeedsBackManager implements Listener {
 		if (plugin.getServer().getPlayer(name) != null) {
 			//is online
 			NeedsPlayer p = new NeedsPlayer(plugin, plugin.getServer().getPlayer(name));
-			BackClass back = new BackClass(p.base, entity.getLocation());
+			BackClass back = new BackClass(p.getPlayer(), entity.getLocation());
 			deathLoc.put(name, back);
 		}
 	}

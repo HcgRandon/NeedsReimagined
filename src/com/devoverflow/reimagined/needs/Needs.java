@@ -8,9 +8,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.devoverflow.reimagined.needs.commands.*;
+import com.devoverflow.reimagined.needs.listeners.NeedsPlayerRespawnListener;
 import com.devoverflow.reimagined.needs.managers.*;
 import com.devoverflow.reimagined.needs.res.NeedsLogger;
 
@@ -21,6 +23,8 @@ public class Needs extends JavaPlugin{
 	
 	public NeedsWorldManager nwm;
 	public NeedsMessageSender nms;
+	public NeedsBackManager nbm;
+	
 	private PluginDescriptionFile pdf;
 	
 	public ChatColor chatGreen     = ChatColor.GREEN;
@@ -44,12 +48,20 @@ public class Needs extends JavaPlugin{
 		LOG_TAG  = pdf.getName();
 		nwm      = new NeedsWorldManager(this);  //startup world manager
 		nms      = new NeedsMessageSender(this); //startup Message Sender
+		nbm      = new NeedsBackManager(this);
 		
+		getCommand("back").setExecutor(new CommandBack(this));
 		getCommand("tp").setExecutor(new CommandTp(this));
 		getCommand("tpto").setExecutor(new CommandTpto(this));
 		getCommand("tphere").setExecutor(new CommandTphere(this));
 		getCommand("world").setExecutor(new CommandWorld(this));
 		getCommand("whereami").setExecutor(new CommandWhereami(this));
+		getCommand("sethome").setExecutor(new CommandSethome(this));
+		
+		PluginManager pm = getServer().getPluginManager();
+		
+		pm.registerEvents(new NeedsPlayerRespawnListener(this), this);
+		pm.registerEvents(nbm, this); //register back events
 		
 		log.i(LOG_TAG, "Needs is now enabled");
 	}

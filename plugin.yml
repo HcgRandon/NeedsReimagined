@@ -28,3 +28,11 @@ commands:
     description: Teleport's target to executor.
     usage: /<command>
     perm: Needs.tphere
+  sethome:
+    description: Set the players respawn location.
+    usage: /<command>
+    perm: Needs.sethome
+  back:
+    description: Allow player to return to death point.
+    usage: /<command>
+    perm: Needs.back

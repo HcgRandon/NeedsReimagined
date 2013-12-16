@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.devoverflow.reimagined.needs.Needs;
-import com.devoverflow.reimagined.needs.res.NeedStrings;
+import com.devoverflow.reimagined.needs.res.NeedsValues;
 import com.devoverflow.reimagined.needs.res.NeedsPlayer;
 
 public class CommandTpto implements CommandExecutor{
@@ -26,7 +26,7 @@ public class CommandTpto implements CommandExecutor{
 		
 		NeedsPlayer player = new NeedsPlayer(plugin, (Player)sender);
 		if (!player.hasPermission(plugin.getCommandPerms("tpto"))) {
-			player.sendError(NeedStrings.perm_error);
+			player.sendError(NeedsValues.perm_error);
 			return true;
 		}
 		

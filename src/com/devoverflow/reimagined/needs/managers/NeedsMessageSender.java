@@ -3,7 +3,7 @@ package com.devoverflow.reimagined.needs.managers;
 import org.bukkit.entity.Player;
 
 import com.devoverflow.reimagined.needs.Needs;
-import com.devoverflow.reimagined.needs.res.NeedStrings;
+import com.devoverflow.reimagined.needs.res.NeedsValues;
 
 public class NeedsMessageSender {
 	private Needs plugin;
@@ -14,13 +14,13 @@ public class NeedsMessageSender {
 	
 	public void broadcastAdmin(String message) {
 		for (Player p : plugin.getServer().getOnlinePlayers()) {
-			if (p.hasPermission(NeedStrings.perm_NeedsAdmin)) p.sendMessage(message);
+			if (p.hasPermission(NeedsValues.perm_NeedsAdmin)) p.sendMessage(message);
 		}
 	}
 	
 	public void broadcastMods(String message) {
 		for (Player p : plugin.getServer().getOnlinePlayers()) {
-			if (p.hasPermission(NeedStrings.perm_NeedsMod)) p.sendMessage("Send to mods: " + message);
+			if (p.hasPermission(NeedsValues.perm_NeedsMod)) p.sendMessage("Send to mods: " + message);
 		}
 		broadcastAdmin(message);
 	}

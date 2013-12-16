@@ -182,6 +182,7 @@ public class NeedsWorldManager {
 		
 		getPlayerInv(p, toWorld);//load other inventory
 		p.teleport(getPlayerLoc(p, toWorld));//teleport player to world
+		plugin.nms.broadcastPlayer(plugin.chatDark_AQUA + p.getName() + plugin.chatGray + " went to " + plugin.chatPurple + toWorld.getName() + plugin.chatGray + ".");
 	}
 	
 	private void savePlayerLoc(Player p) {

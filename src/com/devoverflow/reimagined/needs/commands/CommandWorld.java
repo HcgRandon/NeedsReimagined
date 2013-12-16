@@ -65,12 +65,12 @@ public class CommandWorld implements CommandExecutor {
 			}
 			
 			if (player.base.getWorld().getName().equalsIgnoreCase(args[1])) {
-				player.sendDefault("You are already in " + plugin.chatDark_AQUA + args[1] + plugin.chatRed + ".");
+				player.sendDefault("You are already in " + plugin.chatPurple + args[1] + plugin.chatRed + ".");
 				return true;
 			}
 			
 			plugin.nwm.teleportPlayer(player.base, plugin.getServer().getWorld(args[1]));
-			player.sendDefault("You have been teleported to " + plugin.chatDark_AQUA + args[1] + plugin.chatGold + ".");
+			player.sendDefault("You have been teleported to " + plugin.chatPurple + args[1] + plugin.chatGold + ".");
 			return true;
 		} else if (command.equalsIgnoreCase("info")) {
 			

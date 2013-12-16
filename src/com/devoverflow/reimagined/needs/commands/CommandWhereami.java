@@ -34,7 +34,7 @@ public class CommandWhereami implements CommandExecutor {
 				return true;
 			}
 		}else{
-			player.sendDefault("You are in " + plugin.chatDark_AQUA + player.base.getWorld().getName() + plugin.chatGold + ".");
+			player.sendDefault("You are in " + plugin.chatPurple + player.base.getWorld().getName() + plugin.chatGold + ".");
 			return true;
 		}
 		return false;

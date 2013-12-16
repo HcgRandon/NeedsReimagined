@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 
 import com.devoverflow.reimagined.needs.Needs;
 import com.devoverflow.reimagined.needs.res.NeedsPlayer;
+import com.devoverflow.reimagined.needs.res.NeedsWorld;
 
 public class CommandWorld implements CommandExecutor {
 	private Needs plugin;
@@ -38,8 +39,8 @@ public class CommandWorld implements CommandExecutor {
 		} else if (command.equalsIgnoreCase("list")) {
 			StringBuilder builder = new StringBuilder();
 			int size = plugin.nwm.getWorlds().size(), i = 0;
-			for (String world : plugin.nwm.getWorlds()) {
-				i++; builder.append(world);
+			for (NeedsWorld world : plugin.nwm.getWorlds()) {
+				i++; builder.append(world.getWorldName());
 				if (size == i) builder.append(".");
 				else builder.append(", ");
 			}
@@ -80,9 +81,14 @@ public class CommandWorld implements CommandExecutor {
 				else sender.sendMessage(args[0] + " does not seem to be online.");
 				return true;
 			}
+			Player target = plugin.getServer().getPlayer(args[0]);
 			//we know we are targeting a player lets do it
 			if (args[1].equalsIgnoreCase("go")) {
-				
+				if (!plugin.nwm.needsWorld(args[2])) {
+					player.sendError("Im sorry but I do not handle that world and cannot teleport you to it.");
+					return true;
+				}
+				plugin.nwm.teleportPlayer(target, plugin.getServer().getWorld(args[2]));
 			}
 			
 		}

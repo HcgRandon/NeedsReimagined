@@ -7,10 +7,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+import org.bukkit.WorldType;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
@@ -22,15 +24,15 @@ import com.devoverflow.reimagined.needs.Needs;
 import com.devoverflow.reimagined.needs.res.JSONFileParser;
 import com.devoverflow.reimagined.needs.res.JSONHelper;
 import com.devoverflow.reimagined.needs.res.NeedsLogger;
+import com.devoverflow.reimagined.needs.res.NeedsWorld;
 import com.devoverflow.reimagined.needs.res.json.JSONObject;
 
 @SuppressWarnings("unused")
 public class NeedsWorldManager {
 	private Needs plugin;
 	private String LOG_TAG;
-	private JSONFileParser nfp;
 	private NeedsLogger Log;
-	private List<String> loadedworlds = new ArrayList<String>();
+	private List<NeedsWorld> loadedworlds = new ArrayList<NeedsWorld>();
 	
 	private File worldsfile;
 	private String WORLDS_WRAPPER   = "worlds";
@@ -40,69 +42,143 @@ public class NeedsWorldManager {
 	
 	public NeedsWorldManager(Needs plugin) {
 		this.plugin     = plugin;
-		this.worldsfile = new File(plugin.getDataFolder() + File.separator + "worlds.json");
+		this.worldsfile = new File(plugin.getDataFolder() + File.separator + "worlds.yml");
 		this.Log        = new NeedsLogger();
-		this.nfp        = new JSONFileParser(this.worldsfile);
 		this.LOG_TAG    = plugin.LOG_TAG + "->WorldMan";
 		
-		loadWorlds();
-	}
-	
-	@SuppressWarnings("unchecked")
-	private void loadWorlds() {
-		//pull the jsonObject
-		JSONHelper worlds = new JSONHelper(); 
-		if (nfp.json.get(WORLDS_WRAPPER, null) == null) {
-			nfp.json.set(WORLDS_WRAPPER, new JSONObject());
-			nfp.save();
-		}
-		loadedworlds.add(plugin.getServer().getWorlds().get(0).getName()); //add default world under our teleport fold
-		worlds.setJSONObject((JSONObject)nfp.json.get(WORLDS_WRAPPER, new JSONObject()));
-		
-		Iterator<String> worldi = (Iterator<String>) worlds.getJSONObject().keys();
-		while (worldi.hasNext()) {
-			//pull the next world up
-			String worldname = worldi.next();
-			
-			//get world config
-			JSONHelper world = new JSONHelper();
-			world.setJSONObject((JSONObject) worlds.get(worldname, new JSONObject()));
-			
-			Log.i(LOG_TAG, "Setting up world \"" + worldname + "\"");
-			plugin.getServer().createWorld(new WorldCreator(worldname)); //setup world
-			
-			World nworld = plugin.getServer().getWorld(worldname);//get world instance
-			
-			//get gamerule section
-			JSONHelper gameRules = new JSONHelper();
-			gameRules.setJSONObject((JSONObject) world.get(SECTION_GAMERULE, new JSONObject()));
-			Iterator<String> gamerulei = (Iterator<String>) gameRules.getJSONObject().keys();
-			while (gamerulei.hasNext()) {
-				String gamerule      = gamerulei.next();
-				String gamerulevalue = gameRules.get(gamerule, "").toString();
- 				Log.i(LOG_TAG + "->GameRule", gamerule + ": " + gamerulevalue);
-				nworld.setGameRuleValue(gamerule, gamerulevalue);
+		if (!this.worldsfile.exists()) {
+			try {
+				this.worldsfile.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			
-			if (worldname != null) this.loadedworlds.add(worldname.toString());
 		}
-		Log.i(LOG_TAG, "Done");
-		nfp.save();
+		
+		loadWorlds2();
 	}
 	
-	public List<String> getWorlds() {
+	private void updateGamemode(Player p, World w) {
+		String wName = w.getName();
+		for (NeedsWorld world : this.loadedworlds) {
+			if (world.getWorldName().equalsIgnoreCase(wName))
+				p.setGameMode(world.getGamemode());
+		}
+	}
+	
+	private void loadWorlds2() {
+		//
+		loadedworlds.add(new NeedsWorld("world", GameMode.SURVIVAL));
+		FileConfiguration wConf = YamlConfiguration.loadConfiguration(worldsfile);
+		//get our worlds
+		if (wConf.get(WORLDS_WRAPPER, null) == null) {
+			wConf.set(WORLDS_WRAPPER, null);
+			try {
+				wConf.save(worldsfile);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		for (String world : wConf.getConfigurationSection(WORLDS_WRAPPER).getKeys(false)) {
+			//check if contents are null
+			String worldStart = WORLDS_WRAPPER + "." + world;
+			if (wConf.get(worldStart, null) == null) continue;
+			plugin.log.i(LOG_TAG, "Setting up world \"" + world + "\".");
+			WorldType type     = WorldType.getByName(wConf.getString(worldStart + ".level-type", "NORMAL"));
+			Boolean structures = wConf.getBoolean(worldStart + ".gen-structures", true);
+			Boolean pvp        = wConf.getBoolean(worldStart + ".pvp", true);
+			GameMode gm        = GameMode.valueOf(wConf.getString(worldStart + ".gamemode", "SURVIVAL"));
+			
+			//generate world
+			WorldCreator worldcreator = new WorldCreator(world);
+			worldcreator.type(type);
+			
+			plugin.log.i(LOG_TAG, world + " generate Stuctures set to " + structures + ".");
+			worldcreator.generateStructures(structures);
+			
+			plugin.getServer().createWorld(worldcreator);
+			
+			//pull the gamerule section up
+			World worldi = plugin.getServer().getWorld(world);
+			loadedworlds.add(new NeedsWorld(world, gm));
+			
+			//setpvp
+			worldi.setPVP(pvp);
+			plugin.log.i(LOG_TAG, world + " pvp set to " + pvp + ".");
+			
+			//begin gamerule section
+			if (wConf.get(worldStart + ".gamerule", null) == null) {
+				plugin.log.i(LOG_TAG, "\"" + world + "\" finished.");
+				continue;
+			}
+			for (String gamerule : wConf.getConfigurationSection(worldStart + ".gamerule").getKeys(false)) {
+				String value = wConf.getString(worldStart + ".gamerule." + gamerule, "true");
+				worldi.setGameRuleValue(gamerule, value);
+				plugin.log.i(LOG_TAG, world + " gamerule " + gamerule + " set to " + value + ".");
+			}
+		}
+	}
+	
+//	@SuppressWarnings("unchecked")
+//	private void loadWorlds() {
+//		//pull the jsonObject
+//		JSONHelper worlds = new JSONHelper(); 
+//		if (nfp.json.get(WORLDS_WRAPPER, null) == null) {
+//			nfp.json.set(WORLDS_WRAPPER, new JSONObject());
+//			nfp.save();
+//		}
+//		//loadedworlds.add(plugin.getServer().getWorlds().get(0).getName()); //add default world under our teleport fold
+//		worlds.setJSONObject((JSONObject)nfp.json.get(WORLDS_WRAPPER, new JSONObject()));
+//		
+//		Iterator<String> worldi = (Iterator<String>) worlds.getJSONObject().keys();
+//		while (worldi.hasNext()) {
+//			//pull the next world up
+//			String worldname = worldi.next();
+//			
+//			//get world config
+//			JSONHelper world = new JSONHelper();
+//			world.setJSONObject((JSONObject) worlds.get(worldname, new JSONObject()));
+//			
+//			Log.i(LOG_TAG, "Setting up world \"" + worldname + "\"");
+//			plugin.getServer().createWorld(new WorldCreator(worldname)); //setup world
+//			
+//			World nworld = plugin.getServer().getWorld(worldname);//get world instance
+//			
+//			//get gamerule section
+//			JSONHelper gameRules = new JSONHelper();
+//			gameRules.setJSONObject((JSONObject) world.get(SECTION_GAMERULE, new JSONObject()));
+//			Iterator<String> gamerulei = (Iterator<String>) gameRules.getJSONObject().keys();
+//			while (gamerulei.hasNext()) {
+//				String gamerule      = gamerulei.next();
+//				String gamerulevalue = gameRules.get(gamerule, "").toString();
+// 				Log.i(LOG_TAG + "->GameRule", gamerule + ": " + gamerulevalue);
+//				nworld.setGameRuleValue(gamerule, gamerulevalue);
+//			}
+//			
+//			//if (worldname != null) this.loadedworlds.add(worldname.toString());
+//		}
+//		Log.i(LOG_TAG, "Done");
+//		nfp.save();
+//	}
+	
+	public List<NeedsWorld> getWorlds() {
 		return this.loadedworlds;
 	}
 	
 	public Boolean needsWorld(String w) {
-		if (this.loadedworlds.contains(w)) return true;
+		for (NeedsWorld world : this.loadedworlds) {
+			if (world.getWorldName().equalsIgnoreCase(w))
+				return true;
+		}
 		return false;
 	}
 	
 	public void teleportPlayer(Player p, World toWorld) {
 		savePlayerLoc(p);//save users current loc
 		savePlayerInv(p);//save users inv, arrmor, and exp
-		p.setExp(0f);
+		p.setExp(0.0f);
+		
+		//check for gamemode
+		updateGamemode(p, toWorld);
 		
 		getPlayerInv(p, toWorld);//load other inventory
 		p.teleport(getPlayerLoc(p, toWorld));//teleport player to world

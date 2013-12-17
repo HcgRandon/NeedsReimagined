@@ -69,7 +69,7 @@ public class CommandWorld implements CommandExecutor {
 				return true;
 			}
 			
-			plugin.nwm.teleportPlayer(player.getPlayer(), plugin.getServer().getWorld(args[1]));
+			plugin.nwm.teleportPlayer(player, plugin.getServer().getWorld(args[1]));
 			player.sendDefault("You have been teleported to " + plugin.chatPurple + args[1] + plugin.chatGold + ".");
 			return true;
 		} else if (command.equalsIgnoreCase("info")) {
@@ -81,7 +81,7 @@ public class CommandWorld implements CommandExecutor {
 				else sender.sendMessage(args[0] + " does not seem to be online.");
 				return true;
 			}
-			Player target = plugin.getServer().getPlayer(args[0]);
+			NeedsPlayer target = new NeedsPlayer(plugin, plugin.getServer().getPlayer(args[0]));
 			//we know we are targeting a player lets do it
 			if (args[1].equalsIgnoreCase("go")) {
 				if (!plugin.nwm.needsWorld(args[2])) {

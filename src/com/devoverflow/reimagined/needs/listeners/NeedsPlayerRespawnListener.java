@@ -25,7 +25,7 @@ public class NeedsPlayerRespawnListener implements Listener{
 		NeedsPlayer player = new NeedsPlayer(plugin, event.getPlayer());
 		
 		Location location = event.getRespawnLocation();
-		File yamlFile = new File(plugin.getPlayerDir(player.getPlayer()) + File.separator + "homes.yml");
+		File yamlFile = new File(plugin.getPlayerDir(player) + File.separator + "homes.yml");
 		FileConfiguration hConf = YamlConfiguration.loadConfiguration(yamlFile);
 		
 		String start = player.getWorld().getName();

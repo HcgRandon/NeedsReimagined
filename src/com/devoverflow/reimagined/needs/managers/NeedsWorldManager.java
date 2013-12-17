@@ -24,6 +24,7 @@ import com.devoverflow.reimagined.needs.Needs;
 import com.devoverflow.reimagined.needs.res.JSONFileParser;
 import com.devoverflow.reimagined.needs.res.JSONHelper;
 import com.devoverflow.reimagined.needs.res.NeedsLogger;
+import com.devoverflow.reimagined.needs.res.NeedsPlayer;
 import com.devoverflow.reimagined.needs.res.NeedsWorld;
 import com.devoverflow.reimagined.needs.res.json.JSONObject;
 
@@ -57,17 +58,17 @@ public class NeedsWorldManager {
 		loadWorlds2();
 	}
 	
-	private void updateGamemode(Player p, World w) {
+	private void updateGamemode(NeedsPlayer p, World w) {
 		String wName = w.getName();
 		for (NeedsWorld world : this.loadedworlds) {
 			if (world.getWorldName().equalsIgnoreCase(wName))
-				p.setGameMode(world.getGamemode());
+				p.getPlayer().setGameMode(world.getGamemode());
 		}
 	}
 	
 	private void loadWorlds2() {
 		//
-		loadedworlds.add(new NeedsWorld("world", GameMode.SURVIVAL));
+		loadedworlds.add(new NeedsWorld(plugin.getServer().getWorlds().get(0).getName(), GameMode.SURVIVAL));
 		FileConfiguration wConf = YamlConfiguration.loadConfiguration(worldsfile);
 		//get our worlds
 		if (wConf.get(WORLDS_WRAPPER, null) == null) {
@@ -172,20 +173,20 @@ public class NeedsWorldManager {
 		return false;
 	}
 	
-	public void teleportPlayer(Player p, World toWorld) {
+	public void teleportPlayer(NeedsPlayer p, World toWorld) {
 		savePlayerLoc(p);//save users current loc
 		savePlayerInv(p);//save users inv, arrmor, and exp
-		p.setExp(0.0f);
+		p.getPlayer().setExp(0.0f);
 		
 		//check for gamemode
 		updateGamemode(p, toWorld);
 		
 		getPlayerInv(p, toWorld);//load other inventory
-		p.teleport(getPlayerLoc(p, toWorld));//teleport player to world
+		p.teleportTo(getPlayerLoc(p, toWorld));//teleport player to world
 		plugin.nms.broadcastPlayer(plugin.chatDark_AQUA + p.getName() + plugin.chatGray + " went to " + plugin.chatPurple + toWorld.getName() + plugin.chatGray + ".");
 	}
 	
-	private void savePlayerLoc(Player p) {
+	private void savePlayerLoc(NeedsPlayer p) {
 		File yamlFile          = new File(plugin.getPlayerDir(p) + File.separator + "wtp.yml");
 		FileConfiguration pInv = YamlConfiguration.loadConfiguration(yamlFile);
 		Location l       = p.getLocation();
@@ -207,7 +208,7 @@ public class NeedsWorldManager {
 		}
 	}
 	
-	private Location getPlayerLoc(Player p, World w) {
+	private Location getPlayerLoc(NeedsPlayer p, World w) {
 		File yamlFile          = new File(plugin.getPlayerDir(p) + File.separator + "wtp.yml");
 		FileConfiguration pInv = YamlConfiguration.loadConfiguration(yamlFile);
 		
@@ -240,10 +241,10 @@ public class NeedsWorldManager {
 		return new Location(w, xf, yf, zf, yawf, pitchf);
 	}
 	
-	private void savePlayerInv(Player p) {
+	private void savePlayerInv(NeedsPlayer p) {
 		File yamlFile          = new File(plugin.getPlayerDir(p) + File.separator + "wtp.yml");
 		FileConfiguration pInv = YamlConfiguration.loadConfiguration(yamlFile);
-		PlayerInventory slots  = p.getInventory();
+		PlayerInventory slots  = p.getPlayer().getInventory();
 		
 		int slotCounter = 0, armCounter = 0;
 		
@@ -290,7 +291,7 @@ public class NeedsWorldManager {
 		}
 		
 		
-		if (p.getExp() != 0) pInv.set(p.getWorld().getName() + ".exp", p.getExp());
+		if (p.getPlayer().getExp() != 0) pInv.set(p.getWorld().getName() + ".exp", p.getPlayer().getExp());
 		
 		try {
 			pInv.save(yamlFile);
@@ -301,14 +302,14 @@ public class NeedsWorldManager {
 		}
 	}
 	
-	private void getPlayerInv(Player p, World w) {
+	private void getPlayerInv(NeedsPlayer p, World w) {
 		File yamlFile          = new File(plugin.getPlayerDir(p) + File.separator + "wtp.yml");
 		FileConfiguration pInv = YamlConfiguration.loadConfiguration(yamlFile);
-		PlayerInventory slots  = p.getInventory();
+		PlayerInventory slots  = p.getPlayer().getInventory();
 		slots.clear();//clear inventory
 		int slotCounter = 0;
 		
-		p.setExp(Float.parseFloat(pInv.get(w.getName() + ".exp", "0").toString()));
+		p.getPlayer().setExp(Float.parseFloat(pInv.get(w.getName() + ".exp", "0").toString()));
 		
 		String start = w.getName() + ".inv";
 		

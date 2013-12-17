@@ -15,6 +15,7 @@ import com.devoverflow.reimagined.needs.commands.*;
 import com.devoverflow.reimagined.needs.listeners.NeedsPlayerRespawnListener;
 import com.devoverflow.reimagined.needs.managers.*;
 import com.devoverflow.reimagined.needs.res.NeedsLogger;
+import com.devoverflow.reimagined.needs.res.NeedsPlayer;
 
 public class Needs extends JavaPlugin{
 	public static final String STATIC_LOG_TAG = "Needs Reimagined";
@@ -84,7 +85,7 @@ public class Needs extends JavaPlugin{
 		}
 	}
 	
-	public File getPlayerDir(Player p) {
+	public File getPlayerDir(NeedsPlayer p) {
 		File playerDir = new File(getDataFolder() + File.separator + "players" + File.separator + p.getName());
 		if (!playerDir.exists()) playerDir.mkdirs();
 		

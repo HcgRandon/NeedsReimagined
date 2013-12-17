@@ -51,6 +51,7 @@ public class Needs extends JavaPlugin{
 		nms      = new NeedsMessageSender(this); //startup Message Sender
 		nbm      = new NeedsBackManager(this);
 		
+		getCommand("waypoint").setExecutor(new CommandWaypoint(this));
 		getCommand("back").setExecutor(new CommandBack(this));
 		getCommand("tp").setExecutor(new CommandTp(this));
 		getCommand("tpto").setExecutor(new CommandTpto(this));

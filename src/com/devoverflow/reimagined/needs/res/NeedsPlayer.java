@@ -29,7 +29,7 @@ public class NeedsPlayer{
 	}
 	
 	public Location getLocation() {
-		return this.getLocation();
+		return this.base.getLocation();
 	}
 	
 	public Boolean hasAgroMob() {

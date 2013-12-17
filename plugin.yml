@@ -5,6 +5,11 @@ version: 1.0
 description: >
              A collection of commands and Utilites.
 commands:
+  waypoint:
+    aliases: [wp]
+    description: Waypoint system.
+    usage: /<command> <add|del|info|list|go> [wpname]
+    perm: Needs.waypoint
   home:
     description: Take player to their home.
     usage: /<command>

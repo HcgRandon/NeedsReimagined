@@ -2,6 +2,8 @@ package com.devoverflow.reimagined.needs.commands;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -17,6 +19,7 @@ import com.devoverflow.reimagined.needs.res.NeedsValues;
 
 public class CommandWaypoint implements CommandExecutor {
 	private Needs plugin;
+	private int linesper = 8;
 	
 	public CommandWaypoint(Needs plugin) {
 		this.plugin = plugin;
@@ -154,6 +157,48 @@ public class CommandWaypoint implements CommandExecutor {
 		} else if (cmd.equalsIgnoreCase("info") || cmd.equalsIgnoreCase("list")) {
 			if (!player.hasPermission(plugin.getCommandPerms("waypoint") + ".list")) {
 				player.sendError("You have not the permissions to view waypoints.");
+				return true;
+			}
+			
+			String input = Integer.toString(1);
+			
+			if (args.length > 2) {
+				input = args[1];
+			}
+			
+			if (plugin.isInteger(input)) {
+				int pagenum = Integer.parseInt(input);
+				List<String> lines = new ArrayList<String>();
+				if (wpConf.get(player.getWorld().getName(), null) == null) {
+					player.sendError("I can't find waypoints for this world.");
+					return true;
+				}
+				//add wps to it
+				for (String wp : wpConf.getConfigurationSection(player.getWorld().getName()).getKeys(false)) lines.add(wp);
+				
+				int start, totalPages, next, end, count;
+				
+				if (pagenum == 1) start = 0;
+				else start = (pagenum * linesper);
+				totalPages = (int) Math.ceil(lines.size() + 1 / linesper);
+				next       = pagenum + 1;
+				end        = start + linesper;
+				
+				if (pagenum > totalPages) {
+					player.sendError("No such page exists.");
+					return true;
+				}
+				
+				player.sendDefault("Page " + pagenum + " of " + totalPages);
+				
+				//display stuff
+				for (count = 0; count < lines.size(); count++) {
+					if (count >= start && count < end) {
+						player.sendRaw(plugin.chatDark_AQUA + lines.get(count));
+					}else if (count > end) break;
+				}
+				
+				if (pagenum < totalPages) player.sendDefault("/" + label + " list " + next + " for next page.");
 				return true;
 			}
 		}

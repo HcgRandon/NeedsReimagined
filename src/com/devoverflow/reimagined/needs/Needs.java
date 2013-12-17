@@ -86,6 +86,15 @@ public class Needs extends JavaPlugin{
 		}
 	}
 	
+	public boolean isInteger(String string){
+		try {
+			Integer.valueOf(string);
+			return true;
+		} catch (NumberFormatException ex){
+			return false;
+		}
+	}
+	
 	public File getPlayerDir(NeedsPlayer p) {
 		File playerDir = new File(getDataFolder() + File.separator + "players" + File.separator + p.getName());
 		if (!playerDir.exists()) playerDir.mkdirs();

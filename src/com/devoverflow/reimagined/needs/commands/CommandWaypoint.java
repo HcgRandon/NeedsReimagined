@@ -3,6 +3,7 @@ package com.devoverflow.reimagined.needs.commands;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.Location;
@@ -175,6 +176,9 @@ public class CommandWaypoint implements CommandExecutor {
 				}
 				//add wps to it
 				for (String wp : wpConf.getConfigurationSection(player.getWorld().getName()).getKeys(false)) lines.add(wp);
+				//sort it
+				Collections.sort(lines);
+				
 				
 				int start, totalPages, next, end, count;
 				
@@ -194,7 +198,7 @@ public class CommandWaypoint implements CommandExecutor {
 				//display stuff
 				for (count = 0; count < lines.size(); count++) {
 					if (count >= start && count < end) {
-						player.sendRaw(plugin.chatDark_AQUA + lines.get(count));
+						player.sendRaw("  " + plugin.chatDark_AQUA + lines.get(count));
 					}else if (count > end) break;
 				}
 				

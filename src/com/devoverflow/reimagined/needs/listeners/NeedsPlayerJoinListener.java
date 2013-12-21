@@ -20,7 +20,7 @@ public class NeedsPlayerJoinListener implements Listener{
 		NeedsPlayer player = new NeedsPlayer(plugin, event.getPlayer());
 		
 		//player.sendDefault("A update: ");
-		player.sendDefault("Needs version:" + plugin.getNeedsVersion());
+		player.sendDefault("Needs version: " + plugin.chatItalic + plugin.getNeedsVersion());
 		
 		event.setJoinMessage(plugin.chatBlue + "[" + plugin.getName() + "]: " + plugin.chatDark_AQUA + player.getName() + plugin.chatGold + " joined the server.");
 	}

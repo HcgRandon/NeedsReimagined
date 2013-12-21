@@ -13,6 +13,7 @@ public class NeedsPlayer{
 	private Needs plugin;
 	private String LOG_TAG;
 	private Player base;
+	public Boolean worldchecked = false;
 	
 	public NeedsPlayer(Needs plugin, Player p) {
 		this.plugin  = plugin;
@@ -70,9 +71,18 @@ public class NeedsPlayer{
 	
 	public void teleportTo(Location l) {
 		//if worlds differ change to other world first
-		if (l.getWorld() != base.getWorld()) plugin.nwm.teleportPlayer(this, l.getWorld());
+		if (!this.worldchecked) {
+			this.worldchecked = true;
+			if (l.getWorld() != base.getWorld()) plugin.nwm.teleportPlayer(this, l.getWorld());
+		}
+		
 		
 		//then to teleport
+		base.teleport(l);
+		if (this.worldchecked) this.worldchecked = false;
+	}
+	
+	public void justTeleport(Location l) {
 		base.teleport(l);
 	}
 	

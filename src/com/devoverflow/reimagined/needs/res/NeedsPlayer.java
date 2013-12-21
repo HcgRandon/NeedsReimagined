@@ -69,6 +69,10 @@ public class NeedsPlayer{
 	}
 	
 	public void teleportTo(Location l) {
+		//if worlds differ change to other world first
+		if (l.getWorld() != base.getWorld()) plugin.nwm.teleportPlayer(this, l.getWorld());
+		
+		//then to teleport
 		base.teleport(l);
 	}
 	

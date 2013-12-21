@@ -91,7 +91,7 @@ public class CommandTp implements CommandExecutor {
 			}else if (player == target) {
 				
 			}else{
-				if (sender instanceof Player) player.sendError(tobetp.getName() + " was teleported to " + target.getName() + "'s location.");
+				if (sender instanceof Player) player.sendDefault(tobetp.getName() + " was teleported to " + target.getName() + "'s location.");
 				else sender.sendMessage(tobetp.getName() + " was teleported to " + target.getName() + "'s location.");
 			}
 			

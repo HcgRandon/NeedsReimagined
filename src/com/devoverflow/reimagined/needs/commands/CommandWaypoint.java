@@ -163,7 +163,7 @@ public class CommandWaypoint implements CommandExecutor {
 			
 			String input = Integer.toString(1);
 			
-			if (args.length > 2) {
+			if (args.length >= 2) {
 				input = args[1];
 			}
 			
@@ -184,7 +184,7 @@ public class CommandWaypoint implements CommandExecutor {
 				
 				if (pagenum == 1) start = 0;
 				else start = (pagenum * linesper);
-				totalPages = (int) Math.ceil(lines.size() + 1 / linesper);
+				totalPages = (int) Math.ceil(lines.size() / linesper);
 				next       = pagenum + 1;
 				end        = start + linesper;
 				

@@ -1,10 +1,14 @@
 author: Brandon Riffle randon@devoverflow.com
 name: Needs
 main: com.devoverflow.reimagined.needs.Needs
-version: 1.0
+version: beta 20131220a
 description: >
              A collection of commands and Utilites.
 commands:
+  spawn:
+    description: Take player to world spawn.
+    usage: /<command>
+    perm: Needs.spawn
   waypoint:
     aliases: [wp]
     description: Waypoint system.
@@ -45,3 +49,18 @@ commands:
     description: Allow player to return to death point.
     usage: /<command>
     perm: Needs.back
+    
+permissions:
+  Needs.*:
+    description: Gives full access to needs.
+    children:
+      Needs.spawn
+      Needs.tp
+      Needs.tpto
+      Needs.tphere
+      Needs.sethome
+      Needs.home
+      Needs.whereami
+      Needs.back
+      Needs.world
+      Needs.waypoint

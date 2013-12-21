@@ -43,8 +43,8 @@ public class CommandTphere implements CommandExecutor{
 				return true;
 			}
 			
-			player.sendDefault("Bringing " + plugin.chatDark_AQUA + player.getName() + plugin.chatGold + ".");
-			target.sendDefault("Taking you to " + plugin.chatDark_AQUA + target.getName() + plugin.chatGold + ".");
+			player.sendDefault("Bringing " + plugin.chatDark_AQUA + target.getName() + plugin.chatGold + " here.");
+			target.sendDefault("Taking you to " + plugin.chatDark_AQUA + player.getName() + plugin.chatGold + ".");
 			
 			plugin.log.i(plugin.LOG_TAG, sender.getName() + ": Teleported " + target.getName() + " to " + player.getName());
 			

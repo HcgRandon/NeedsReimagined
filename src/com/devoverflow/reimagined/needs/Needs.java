@@ -12,6 +12,8 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.devoverflow.reimagined.needs.commands.*;
+import com.devoverflow.reimagined.needs.listeners.NeedsPlayerJoinListener;
+import com.devoverflow.reimagined.needs.listeners.NeedsPlayerQuitListener;
 import com.devoverflow.reimagined.needs.listeners.NeedsPlayerRespawnListener;
 import com.devoverflow.reimagined.needs.managers.*;
 import com.devoverflow.reimagined.needs.res.NeedsLogger;
@@ -51,6 +53,8 @@ public class Needs extends JavaPlugin{
 		nms      = new NeedsMessageSender(this); //startup Message Sender
 		nbm      = new NeedsBackManager(this);
 		
+		getCommand("home").setExecutor(new CommandHome(this));
+		getCommand("sethome").setExecutor(new CommandSethome(this));
 		getCommand("waypoint").setExecutor(new CommandWaypoint(this));
 		getCommand("back").setExecutor(new CommandBack(this));
 		getCommand("tp").setExecutor(new CommandTp(this));
@@ -58,12 +62,15 @@ public class Needs extends JavaPlugin{
 		getCommand("tphere").setExecutor(new CommandTphere(this));
 		getCommand("world").setExecutor(new CommandWorld(this));
 		getCommand("whereami").setExecutor(new CommandWhereami(this));
-		getCommand("sethome").setExecutor(new CommandSethome(this));
+		getCommand("spawn").setExecutor(new CommandSpawn(this));
+		
 		
 		PluginManager pm = getServer().getPluginManager();
 		
 		pm.registerEvents(new NeedsPlayerRespawnListener(this), this);
 		pm.registerEvents(nbm, this); //register back events
+		pm.registerEvents(new NeedsPlayerJoinListener(this), this);
+		pm.registerEvents(new NeedsPlayerQuitListener(this), this);
 		
 		log.i(LOG_TAG, "Needs is now enabled");
 	}
@@ -119,5 +126,9 @@ public class Needs extends JavaPlugin{
 		else if (addit.containsKey("perms")) return addit.get("perms").toString();
 		
 		return null;
+	}
+	
+	public String getNeedsVersion() {
+		return pdf.getVersion();
 	}
 }

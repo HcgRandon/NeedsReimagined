@@ -183,8 +183,8 @@ public class CommandWaypoint implements CommandExecutor {
 				int start, totalPages, next, end, count;
 				
 				if (pagenum == 1) start = 0;
-				else start = (pagenum * linesper);
-				totalPages = (int) Math.ceil(lines.size() / linesper);
+				else start = ((pagenum * linesper) - linesper);
+				totalPages = (int) Math.ceil((lines.size() * 1.0) / (linesper * 1.0));
 				next       = pagenum + 1;
 				end        = start + linesper;
 				

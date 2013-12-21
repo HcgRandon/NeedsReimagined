@@ -1,7 +1,7 @@
 author: Brandon Riffle randon@devoverflow.com
 name: Needs
 main: com.devoverflow.reimagined.needs.Needs
-version: beta 20131220a
+version: beta 20131221a
 description: >
              A collection of commands and Utilites.
 commands:
@@ -54,13 +54,13 @@ permissions:
   Needs.*:
     description: Gives full access to needs.
     children:
-      Needs.spawn
-      Needs.tp
-      Needs.tpto
-      Needs.tphere
-      Needs.sethome
-      Needs.home
-      Needs.whereami
-      Needs.back
-      Needs.world
-      Needs.waypoint
+      Needs.spawn: true
+      Needs.tp: true
+      Needs.tpto: true
+      Needs.tphere: true
+      Needs.sethome: true
+      Needs.home: true
+      Needs.whereami: true
+      Needs.back: true
+      Needs.world: true
+      Needs.waypoint: true

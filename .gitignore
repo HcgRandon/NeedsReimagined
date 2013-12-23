@@ -1,5 +1,4 @@
-.classpath
-.project
-.settings/
-bin/
+/.settings/
+/bin/
 *.jardesc
+/craftbukkit.jar

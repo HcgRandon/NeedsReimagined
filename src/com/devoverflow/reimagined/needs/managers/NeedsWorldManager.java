@@ -21,12 +21,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import com.devoverflow.reimagined.needs.Needs;
-import com.devoverflow.reimagined.needs.res.JSONFileParser;
-import com.devoverflow.reimagined.needs.res.JSONHelper;
 import com.devoverflow.reimagined.needs.res.NeedsLogger;
 import com.devoverflow.reimagined.needs.res.NeedsPlayer;
 import com.devoverflow.reimagined.needs.res.NeedsWorld;
-import com.devoverflow.reimagined.needs.res.json.JSONObject;
 
 @SuppressWarnings("unused")
 public class NeedsWorldManager {
@@ -72,12 +69,8 @@ public class NeedsWorldManager {
 		FileConfiguration wConf = YamlConfiguration.loadConfiguration(worldsfile);
 		//get our worlds
 		if (wConf.get(WORLDS_WRAPPER, null) == null) {
-			wConf.set(WORLDS_WRAPPER, null);
-			try {
-				wConf.save(worldsfile);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			//wConf.set(WORLDS_WRAPPER, null);
+			return;
 		}
 		for (String world : wConf.getConfigurationSection(WORLDS_WRAPPER).getKeys(false)) {
 			//check if contents are null
@@ -101,65 +94,33 @@ public class NeedsWorldManager {
 			//pull the gamerule section up
 			World worldi = plugin.getServer().getWorld(world);
 			loadedworlds.add(new NeedsWorld(world, gm));
+			NeedsWorld nw = this.getNeedsWorld(world);
 			
 			//setpvp
 			worldi.setPVP(pvp);
 			plugin.log.i(LOG_TAG, world + " pvp set to " + pvp + ".");
 			
 			//begin gamerule section
-			if (wConf.get(worldStart + ".gamerule", null) == null) {
+			if (wConf.get(worldStart + ".gamerule", null) != null) {
 				plugin.log.i(LOG_TAG, "\"" + world + "\" finished.");
-				continue;
+				for (String gamerule : wConf.getConfigurationSection(worldStart + ".gamerule").getKeys(false)) {
+					String value = wConf.getString(worldStart + ".gamerule." + gamerule, "true");
+					worldi.setGameRuleValue(gamerule, value);
+					plugin.log.i(LOG_TAG, world + " gamerule " + gamerule + " set to " + value + ".");
+				}
 			}
-			for (String gamerule : wConf.getConfigurationSection(worldStart + ".gamerule").getKeys(false)) {
-				String value = wConf.getString(worldStart + ".gamerule." + gamerule, "true");
-				worldi.setGameRuleValue(gamerule, value);
-				plugin.log.i(LOG_TAG, world + " gamerule " + gamerule + " set to " + value + ".");
+			
+			//now we load in allowed players.
+			if (wConf.get(worldStart + "." + SECTION_PLAYERS, null) != null) {
+				nw.setAllowedPlayers(new ArrayList<String>());
+				for (String playerName : wConf.getConfigurationSection(worldStart + "." + SECTION_PLAYERS).getKeys(false)) {
+					if (playerName == null) continue;
+					nw.appendAllowedPlayer(playerName);
+				}
 			}
+				
 		}
 	}
-	
-//	@SuppressWarnings("unchecked")
-//	private void loadWorlds() {
-//		//pull the jsonObject
-//		JSONHelper worlds = new JSONHelper(); 
-//		if (nfp.json.get(WORLDS_WRAPPER, null) == null) {
-//			nfp.json.set(WORLDS_WRAPPER, new JSONObject());
-//			nfp.save();
-//		}
-//		//loadedworlds.add(plugin.getServer().getWorlds().get(0).getName()); //add default world under our teleport fold
-//		worlds.setJSONObject((JSONObject)nfp.json.get(WORLDS_WRAPPER, new JSONObject()));
-//		
-//		Iterator<String> worldi = (Iterator<String>) worlds.getJSONObject().keys();
-//		while (worldi.hasNext()) {
-//			//pull the next world up
-//			String worldname = worldi.next();
-//			
-//			//get world config
-//			JSONHelper world = new JSONHelper();
-//			world.setJSONObject((JSONObject) worlds.get(worldname, new JSONObject()));
-//			
-//			Log.i(LOG_TAG, "Setting up world \"" + worldname + "\"");
-//			plugin.getServer().createWorld(new WorldCreator(worldname)); //setup world
-//			
-//			World nworld = plugin.getServer().getWorld(worldname);//get world instance
-//			
-//			//get gamerule section
-//			JSONHelper gameRules = new JSONHelper();
-//			gameRules.setJSONObject((JSONObject) world.get(SECTION_GAMERULE, new JSONObject()));
-//			Iterator<String> gamerulei = (Iterator<String>) gameRules.getJSONObject().keys();
-//			while (gamerulei.hasNext()) {
-//				String gamerule      = gamerulei.next();
-//				String gamerulevalue = gameRules.get(gamerule, "").toString();
-// 				Log.i(LOG_TAG + "->GameRule", gamerule + ": " + gamerulevalue);
-//				nworld.setGameRuleValue(gamerule, gamerulevalue);
-//			}
-//			
-//			//if (worldname != null) this.loadedworlds.add(worldname.toString());
-//		}
-//		Log.i(LOG_TAG, "Done");
-//		nfp.save();
-//	}
 	
 	public List<NeedsWorld> getWorlds() {
 		return this.loadedworlds;
@@ -171,6 +132,11 @@ public class NeedsWorldManager {
 				return true;
 		}
 		return false;
+	}
+	
+	public NeedsWorld getNeedsWorld(String worldname) {
+		for (NeedsWorld w : this.loadedworlds) if (w.getWorldName().equalsIgnoreCase(worldname)) return w;
+		return null;
 	}
 	
 	public void teleportPlayer(NeedsPlayer p, World toWorld) {
@@ -296,7 +262,7 @@ public class NeedsWorldManager {
 		
 		try {
 			pInv.save(yamlFile);
-			plugin.log.i(LOG_TAG, "Saved file to: " + yamlFile.getAbsolutePath());
+			//plugin.log.i(LOG_TAG, "Saved file to: " + yamlFile.getAbsolutePath());
 		} catch (IOException e) {
 			plugin.log.e(LOG_TAG, "Could not save: " + yamlFile.getAbsolutePath());
 			e.printStackTrace();
@@ -330,8 +296,16 @@ public class NeedsWorldManager {
 					String enchantmentname = pInv.getString(fetchloc + ".enh." + ii + ".nme", null);
 					int enchantmentlevel    = pInv.getInt(fetchloc + ".enh." + ii + ".lvl", 0);
 					if (enchantmentname == null || enchantmentlevel == 0) continue;
-					Enchantment enchant =  Enchantment.getByName(enchantmentname);
-					slot.addEnchantment(enchant, enchantmentlevel);
+					
+					//pervent errors durning encahntment restore.
+					try {
+						Enchantment enchant =  Enchantment.getByName(enchantmentname);
+						slot.addEnchantment(enchant, enchantmentlevel);
+					} catch (Exception e) {
+						//send player info about enchant fail
+						p.sendError("Failed to restore enchantment " + enchantmentname + " on item #" + slotCounter);
+						continue;
+					}
 				}
 			}
 			slots.setItem(slotCounter, slot);

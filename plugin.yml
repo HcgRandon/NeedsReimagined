@@ -1,7 +1,7 @@
 author: Brandon Riffle randon@devoverflow.com
 name: Needs
 main: com.devoverflow.reimagined.needs.Needs
-version: beta 20131221a
+version: beta 20140309a
 description: >
              A collection of commands and Utilites.
 commands:

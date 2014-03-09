@@ -16,14 +16,9 @@ public class NeedsSettings {
 		
 		configdir    = this.plugin.getDataFolder();
 		playerdir    = new File(this.plugin.getDataFolder() + File.separator + "players");
-		mainconfig   = new File(this.plugin.getDataFolder() + File.separator + "main.json");
+		mainconfig   = new File(this.plugin.getDataFolder() + File.separator + "config.yml");
 		
 		if (!configdir.exists()) configdir.mkdir();
 		if (!playerdir.exists()) playerdir.mkdir();
-		
-		JSONFileParser config = new JSONFileParser(mainconfig);
-		if (config.error() != null) {
-			plugin.log.e(LOG_TAG, "Failed to load main.json: " + config.error().getError());
-		}
 	}
 }

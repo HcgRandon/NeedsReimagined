@@ -59,13 +59,21 @@ public class CommandWorld implements CommandExecutor {
 				return true;
 			}
 			
-			if (!plugin.nwm.needsWorld(args[1])) {
+			if (!plugin.nwm.needsWorld(args[1].toLowerCase())) {
 				player.sendError("Im sorry but I do not handle that world and cannot teleport you to it.");
 				return true;
 			}
 			
 			if (player.getWorld().getName().equalsIgnoreCase(args[1])) {
 				player.sendDefault("You are already in " + plugin.chatPurple + args[1] + plugin.chatRed + ".");
+				return true;
+			}
+			
+			//get the needs world
+			NeedsWorld nw = plugin.nwm.getNeedsWorld(args[1]);
+			
+			if (!nw.playerAllowed(player)) {
+				player.sendError("You are not allowed to visit that world.");
 				return true;
 			}
 			

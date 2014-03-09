@@ -16,6 +16,8 @@ public class NeedsMessageSender {
 		for (Player p : plugin.getServer().getOnlinePlayers()) {
 			if (p.hasPermission(NeedsValues.perm_NeedsAdmin)) p.sendMessage(message);
 		}
+		
+		plugin.log.i(plugin.LOG_TAG, message);
 	}
 	
 	public void broadcastMods(String message) {
@@ -29,5 +31,8 @@ public class NeedsMessageSender {
 		for (Player p : plugin.getServer().getOnlinePlayers()) {
 			p.sendMessage(message);
 		}
+		
+		//tell console cuz its cool.
+		plugin.log.i(plugin.LOG_TAG, message);
 	}
 }

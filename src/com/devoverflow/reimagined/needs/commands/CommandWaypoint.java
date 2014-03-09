@@ -107,7 +107,7 @@ public class CommandWaypoint implements CommandExecutor {
 			String wpname = args[1].toLowerCase();
 			
 			String start  = player.getWorld().getName() + "." + wpname;
-			if (wpConf.get(start, null) == null) {
+			if (wpConf.get(start, null) != null) {
 				wpConf.set(start, null);
 				try {
 					wpConf.save(yamlFile);
@@ -116,6 +116,7 @@ public class CommandWaypoint implements CommandExecutor {
 					player.sendError("Could not remove waypoint!");
 					e.printStackTrace();
 				}
+				return true;
 			}else{
 				player.sendError("Waypoint " + wpname + " does not seem to exists.");
 				return true;

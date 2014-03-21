@@ -5,10 +5,6 @@ import com.devoverflow.reimagined.needs.Needs;
 
 public class NeedsSettings {
 	private Needs plugin;
-	private String LOG_TAG = Needs.STATIC_LOG_TAG;
-	
-	public final String SECTION_WORLDS = "worlds";
-	
 	private File configdir, mainconfig, playerdir;
 	
 	public NeedsSettings(Needs plugin) {
